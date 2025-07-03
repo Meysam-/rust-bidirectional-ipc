@@ -1,0 +1,15 @@
+[package]
+name = "rust_ipc"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ipc-channel = "0.20"
+
+[[bin]]
+name = "parent"
+path = "src/parent.rs"
+
+[[bin]]
+name = "child"
+path = "src/child.rs"
