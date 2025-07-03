@@ -19,7 +19,7 @@ fn main() {
         .arg("run")
         .arg("--bin")
         .arg("child")
-        .arg(format!("channel_name:{}", server_name))
+        .env("CHANNEL_NAME", &server_name)
         .stdout(Stdio::piped())
         .spawn()
         .expect("Failed to run child process");

@@ -5,14 +5,8 @@ use std::env;
 type ParentMsg = String;
 type ClientMsg = String;
 
-pub fn get_channel_name_arg() -> Option<String> {
-    for arg in env::args() {
-        let arg_str = "channel_name:";
-        if let Some(arg) = arg.strip_prefix(arg_str) {
-            return Some(arg.to_owned());
-        }
-    }
-    None
+pub fn get_channel_name_from_env() -> Option<String> {
+    env::var("CHANNEL_NAME").ok()
 }
 fn main() {
     let (parent_tx, client_rx): (IpcSender<ParentMsg>, IpcReceiver<ClientMsg>) = channel().unwrap();
@@ -20,7 +14,7 @@ fn main() {
 
     println!("Child process started");
 
-    let one_shot_server_name = get_channel_name_arg().unwrap();
+    let one_shot_server_name = get_channel_name_from_env().unwrap();
     println!("One Shot Server name: {}", one_shot_server_name);
 
     let tx0 = IpcSender::connect(one_shot_server_name).unwrap();
