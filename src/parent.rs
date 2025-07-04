@@ -1,8 +1,5 @@
 use ipc_channel::ipc::{IpcOneShotServer, IpcReceiver, IpcSender};
-use std::{
-    io::Read,
-    process::{Command, Stdio},
-};
+use std::process::{Command, Stdio};
 
 type ParentMsg = String;
 type ClientMsg = String;
@@ -15,12 +12,13 @@ fn main() {
     let (server0, server_name) = IpcOneShotServer::new().unwrap();
     println!("One Shot Server name - Parent: {}", server_name);
 
-    let child = Command::new("cargo")
+    let mut child = Command::new("cargo")
         .arg("run")
         .arg("--bin")
         .arg("child")
         .env("CHANNEL_NAME", &server_name)
-        .stdout(Stdio::piped())
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
         .spawn()
         .expect("Failed to run child process");
 
@@ -53,10 +51,11 @@ fn main() {
     // Send a quit message to the child process
     tx_handle.send("quit".to_string()).unwrap();
 
-    // print the standard output of the child process
-    let output = child.wait_with_output().expect("Failed to wait on child");
-    let mut buff = String::new();
-    output.stdout.as_slice().read_to_string(&mut buff).unwrap();
-    println!("--------------------- stdout: {}", buff);
-    println!("-----------------------------------------")
+    // Wait for the child process to finish
+    let exit_code = child.wait().expect("Failed to wait on child");
+    if exit_code.success() {
+        println!("Child process exited successfully.");
+    } else {
+        eprintln!("Child process exited with an error.");
+    }
 }
