@@ -9,8 +9,8 @@ pub fn get_channel_name_from_env() -> Option<String> {
     env::var("CHANNEL_NAME").ok()
 }
 fn main() {
-    let (parent_tx, client_rx): (IpcSender<ParentMsg>, IpcReceiver<ClientMsg>) = channel().unwrap();
-    let (client_tx, parent_rx): (IpcSender<ClientMsg>, IpcReceiver<ParentMsg>) = channel().unwrap();
+    let (parent_tx, client_rx): (IpcSender<ParentMsg>, IpcReceiver<ParentMsg>) = channel().unwrap();
+    let (client_tx, parent_rx): (IpcSender<ClientMsg>, IpcReceiver<ClientMsg>) = channel().unwrap();
 
     println!("Child process started");
 
